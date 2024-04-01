@@ -1,0 +1,635 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Test Wefit",
+        "description": "This project is a challenge to Wefit.",
+        "version": "1.0.0",
+        "contact": {
+            "email": "leandronstrab@gmail.com"
+        }
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8081/v1",
+            "description": "API development"
+        }
+    ],
+    "paths": {
+        "/auth": {
+            "post": {
+                "summary": "Admin authentication",
+                "description": "Admin authentication jwt",
+                "tags": ["auth"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AdminAuthSchema"     
+                            },
+                            "examples": {
+                                "admin1":{
+                                    "value": {
+                                        "username": "root",
+                                        "password": "senha_root_123"
+                                    }
+                                }
+                            }
+                        }
+                    }    
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref":"#/components/schemas/Authentication"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found!",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref":"#/components/schemas/APIError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": { 
+                "security": [{
+                    "x-access-token": []
+                }],
+                "summary": "Get users",
+                "description": "Get users",
+                "tags": ["Users"],
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "page",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref":"#/components/schemas/User"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [{
+                    "x-access-token": []
+                }],
+                "summary": "User registration",
+                "description": "Create a new user",
+                "tags": ["Users"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserSchema"     
+                            },
+                            "examples": {
+                                "user1":{
+                                    "value": {
+                                        "user": {
+                                            "name": "Test User",
+                                            "cpf": "668.518.250-40",
+                                            "contact": {
+                                                "email": "testUser@gmail.com",
+                                                "cell": "19999999998",
+                                                "phone": "1122222221"
+                                            },
+                                            "address": {
+                                                "postalCode": "04220-030",
+                                                "publicPlace": "rua teste",
+                                                "number": "500a",
+                                                "complement":"perto da li",
+                                                "city": "São paulo",
+                                                "neighborhood": "heliopoliop",
+                                                "state": "São paulo"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref":"#/components/schemas/APIError"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref":"#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "conflict",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref":"#/components/schemas/APIError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "get": { 
+                "security": [{
+                    "x-access-token": []
+                }],
+                "summary": "Get user",
+                "description": "Get user",
+                "tags": ["Users"],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref":"#/components/schemas/User"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": { 
+                "security": [{
+                    "x-access-token": []
+                }],
+                "summary": "Delete user",
+                "description": "Delete user",
+                "tags": ["Users"],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref":"#/components/schemas/DeleteResult"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref":"#/components/schemas/APIError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/companies": {
+            "get": { 
+                "security": [{
+                    "x-access-token": []
+                }],
+                "summary": "Get companies",
+                "description": "Get companies",
+                "tags": ["Companies"],
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "page",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref":"#/components/schemas/Company"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [{
+                    "x-access-token": []
+                }],
+                "summary": "Company registration",
+                "description": "Create a new Company",
+                "tags": ["Companies"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CompanySchema"     
+                            },
+                            "examples": {
+                                "user1":{
+                                    "value": {
+                                        "company": {
+                                            "name": "Test Company",
+                                            "cpf": "668.518.250-40",
+                                            "cnpj": "61.695.227/0001-93",
+                                            "contact": {
+                                                "email": "testeCompany@gmail.com",
+                                                "cell": "19999999997",
+                                                "phone": "1122222223"
+                                            },
+                                            "address": {
+                                                "postalCode": "04220-030",
+                                                "publicPlace": "rua teste",
+                                                "number": "500a",
+                                                "complement":"perto da li",
+                                                "city": "São paulo",
+                                                "neighborhood": "heliopoliop",
+                                                "state": "São paulo"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref":"#/components/schemas/APIError"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref":"#/components/schemas/Company"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "conflict",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref":"#/components/schemas/APIError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/companies/{id}": {
+            "get": { 
+                "security": [{
+                    "x-access-token": []
+                }],
+                "summary": "Get company",
+                "description": "Get company",
+                "tags": ["Companies"],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Company ID",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref":"#/components/schemas/Company"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": { 
+                "security": [{
+                    "x-access-token": []
+                }],
+                "summary": "Delete company",
+                "description": "Delete company",
+                "tags": ["Companies"],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Company ID",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref":"#/components/schemas/DeleteResult"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref":"#/components/schemas/APIError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }        
+    },
+    "components": {
+        "schemas": {
+            "AdminAuthSchema": {
+                "type": "object",
+                "properties": {
+                    "password": {
+                        "type": "string"
+                    },
+                    "username": {
+                        "type": "string"
+                    }
+                }    
+            },
+            "Authentication": {
+                "type": "object",
+                "properties": {
+                    "auth": {
+                        "type": "boolean"
+                    },
+                    "token": {
+                        "type": "string"
+                    }
+                }
+            },
+            "APIError": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "string"
+                    },
+                    "detail": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "statusCode": {
+                        "type": "number"
+                    },
+                    "data": {
+                        "type": "object"
+                    }
+                }
+            },
+            "User": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "uuid": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Company": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "uuid": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "userId": {
+                        "type": "number"
+                    },
+                    "createdAt": {
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "type": "string"
+                    }
+                }
+            },
+            "DeleteResult" : {
+                "type": "object",
+                "properties": {
+                    "affected": {
+                        "type": "number"
+                    },
+                    "raw": {
+                        "type": "any"
+                    }
+                }
+            },
+            "CompanySchema" : {
+                "type": "object",
+                "properties": {
+                    "company": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            },
+                            "cpf": {
+                                "type": "string"
+                            },
+                            "cnpj": {
+                                "type": "string"
+                            },
+                            "contact": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "cell": {
+                                        "type": "string"
+                                    },
+                                    "phone": {
+                                        "type": "string"
+                                    }                    
+                                }
+                            },
+                            "address": {
+                                "type": "object",
+                                "properties": {
+                                    "postalCode": {
+                                        "type": "string"
+                                    },
+                                    "publicPlace": {
+                                        "type": "string"
+                                    },
+                                    "number": {
+                                        "type": "string"
+                                    },
+                                    "complement": {
+                                        "type": "string"
+                                    },
+                                    "city": {
+                                        "type": "string"
+                                    },
+                                    "neighborhood": {
+                                        "type": "string"
+                                    },
+                                    "state": {
+                                        "type": "string"
+                                    }                     
+                                }
+                            }                  
+                        }
+                    }
+                }
+            },
+            "UserSchema" : {
+                "type": "object",
+                "properties": {
+                    "user": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            },
+                            "cpf": {
+                                "type": "string"
+                            },
+                            "contact": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "cell": {
+                                        "type": "string"
+                                    },
+                                    "phone": {
+                                        "type": "string"
+                                    }                    
+                                }
+                            },
+                            "address": {
+                                "type": "object",
+                                "properties": {
+                                    "postalCode": {
+                                        "type": "string"
+                                    },
+                                    "publicPlace": {
+                                        "type": "string"
+                                    },
+                                    "number": {
+                                        "type": "string"
+                                    },
+                                    "complement": {
+                                        "type": "string"
+                                    },
+                                    "city": {
+                                        "type": "string"
+                                    },
+                                    "neighborhood": {
+                                        "type": "string"
+                                    },
+                                    "state": {
+                                        "type": "string"
+                                    }                     
+                                }
+                            }                  
+                        }
+                    }
+                }
+            }
+            
+        },
+        "securitySchemes": {
+            "x-access-token" : {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT" 
+            }
+        }
+    }
+}
